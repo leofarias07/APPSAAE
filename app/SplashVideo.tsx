@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { StyleSheet, View, Dimensions, Text, Animated } from 'react-native';
+import { StyleSheet, View, Dimensions, Animated } from 'react-native';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { colors } from '@/constants/colors';
 import { Droplet } from 'lucide-react-native';
@@ -13,23 +13,14 @@ export function SplashVideo({ onFinish }: SplashVideoProps) {
   const { width, height } = Dimensions.get('window');
   const [isBuffering, setIsBuffering] = useState(true);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const titleFadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Logo fade-in animation
-    Animated.sequence([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(titleFadeAnim, {
-        toValue: 1,
-        duration: 600,
-        delay: 300,
-        useNativeDriver: true,
-      })
-    ]).start();
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
   }, []);
 
   return (
@@ -57,9 +48,6 @@ export function SplashVideo({ onFinish }: SplashVideoProps) {
       <View style={styles.overlay}>
         <Animated.View style={[styles.logoContainer, { opacity: fadeAnim }]}>
           <Droplet size={80} color={colors.white} style={styles.dropletIcon} />
-          <Animated.Text style={[styles.logoText, { opacity: titleFadeAnim }]}>
-            SAAE CAXIAS
-          </Animated.Text>
         </Animated.View>
       </View>
     </View>
@@ -85,11 +73,7 @@ const styles = StyleSheet.create({
   },
   dropletIcon: {
     marginBottom: 20,
-  },
-  logoText: {
-    color: colors.white,
-    fontSize: 36,
-    fontFamily: 'Poppins-Bold',
-    letterSpacing: 1,
   }
-}); 
+});
+
+export default SplashVideo; 

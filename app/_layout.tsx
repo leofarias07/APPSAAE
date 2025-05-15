@@ -16,7 +16,10 @@ import { colors } from '@/constants/colors';
 import { checkReactNativeImports } from '@/utils/diagnostic';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ClientProvider } from '@/contexts/ClientContext';
+import { QueryProvider } from '../providers/QueryProvider';
 import { SplashVideo } from './SplashVideo';
+import { NetworkStatus } from '@/components/NetworkStatus';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -64,25 +67,30 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <ClientProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <StatusBar style={isDark ? 'light' : 'dark'} />
-          <Stack 
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { 
-                backgroundColor: isDark ? colors.darkBg : colors.lightBg
-              },
-            }} 
-          >
-            <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" options={{ title: 'Oops!' }} />
-            <Stack.Screen name="bill-details/[id]/[parcel]" options={{ headerShown: false }} />
-          </Stack>
-        </GestureHandlerRootView>
-      </ClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <QueryProvider>
+        <AuthProvider>
+          <ClientProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <StatusBar style={isDark ? 'light' : 'dark'} />
+              <NetworkStatus />
+              <Stack 
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { 
+                    backgroundColor: isDark ? colors.darkBg : colors.lightBg
+                  },
+                }} 
+              >
+                <Stack.Screen name="login" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" options={{ title: 'Oops!' }} />
+                <Stack.Screen name="bill-details/[id]/[parcela]" options={{ headerShown: false }} />
+              </Stack>
+            </GestureHandlerRootView>
+          </ClientProvider>
+        </AuthProvider>
+      </QueryProvider>
+    </ErrorBoundary>
   );
 }

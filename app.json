@@ -7,11 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "saae-caxias",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#005D93"
-    },
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,

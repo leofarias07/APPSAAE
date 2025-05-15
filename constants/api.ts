@@ -1,5 +1,9 @@
 export const API = {
+  // URL principal da API
   BASE_URL: 'http://45.162.56.223:3000',
+  
+  // URL alternativa da API (backup)
+  BACKUP_URL: 'http://45.162.56.223:3200',  // Se existir um servidor espelho ou backup
   
   // Endpoints
   CLIENT_DATA: (matricula: string) => 
@@ -23,6 +27,24 @@ export const API = {
     let url = `/api/mobile/clientes/${matricula}/consumo`;
     if (limite) url += `?limite=${limite}`;
     return url;
+  },
+  
+  // Função para verificar se um servidor está disponível
+  isServerAvailable: async (url: string): Promise<boolean> => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de timeout
+      
+      const response = await fetch(`${url}/api/health`, {
+        method: 'GET',
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      return response.ok;
+    } catch (e) {
+      return false;
+    }
   }
 };
 

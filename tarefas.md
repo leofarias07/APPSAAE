@@ -109,12 +109,13 @@ Após implementar as correções, devemos verificar se:
 - **Descrição**: Implementar React Query para gerenciamento de cache e revalidação de dados das APIs
 - **Benefícios**: Melhor desempenho, redução de chamadas à API, experiência offline aprimorada
 - **Tarefas**:
-  - [ ] Configurar provider do React Query
-  - [ ] Migrar serviços de API para hooks de query
-  - [ ] Implementar políticas de cache por endpoint
-  - [ ] Configurar estratégias de revalidação
+  - [x] Configurar provider do React Query
+  - [x] Migrar serviços de API para hooks de query
+  - [x] Implementar políticas de cache por endpoint
+  - [x] Configurar estratégias de revalidação
 - **Prazo**: 2 semanas
 - **Responsável**: Equipe de Frontend
+- **Status**: Concluído em 27/06/2024
 
 ### Autenticação com JWT
 - **Descrição**: Implementar sistema de autenticação baseado em tokens JWT

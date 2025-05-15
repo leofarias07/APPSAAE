@@ -48,6 +48,13 @@ export default function LoginScreen() {
     inputRef.current?.focus();
   }, []);
 
+  // Novo useEffect para lidar com a navegação
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/(tabs)");
+    }
+  }, [isAuthenticated, router]);
+
   const handleLogin = async () => {
     if (!matricula.trim()) {
       setError('Por favor, digite sua matrícula');
@@ -70,9 +77,9 @@ export default function LoginScreen() {
     return <LoadingIndicator />;
   }
 
-  // Redirecionar para a tela principal se já estiver autenticado
+  // Mostrar indicador de carregamento enquanto o redirecionamento acontece
   if (isAuthenticated) {
-    return <Redirect href="/(tabs)" />;
+    return <LoadingIndicator fullScreen message="Entrando..." />;
   }
 
   return (
@@ -158,6 +165,8 @@ export default function LoginScreen() {
             loading={isLoading}
             disabled={!matricula.trim() || isLoading}
             style={styles.loginButton}
+            size="large"
+            fullWidth
           />
           <Text style={[styles.helpText, { color: textColor }]}>Sua matrícula está no canto superior direito da sua fatura de água</Text>
         </View>
@@ -248,7 +257,13 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginBottom: 24,
-    height: 56,
+    height: 60,
+    borderRadius: 16,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
   },
   helpText: {
     fontSize: 14,

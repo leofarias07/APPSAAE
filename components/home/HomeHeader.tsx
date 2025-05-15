@@ -2,8 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, useColorScheme, Image, Platform } from 'react-native';
 import { colors } from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Droplet } from 'lucide-react-native';
-import { BlurView } from 'expo-blur';
+import { Droplet, Home, User } from 'lucide-react-native';
 
 type HomeHeaderProps = {
   clientName: string | undefined;
@@ -21,8 +20,8 @@ export function HomeHeader({ clientName, clientAddress }: HomeHeaderProps) {
     <View style={styles.headerWrapper}>
       <LinearGradient
         colors={isDark 
-          ? [colors.primaryDark, '#114076'] 
-          : ['#0077D9', colors.primary]}
+          ? ['#0057B7', '#003A7A'] 
+          : ['#0077D9', '#005CB5']}
         start={{ x: 0, y: 0.2 }}
         end={{ x: 1, y: 0.8 }}
         style={styles.headerContainer}
@@ -30,6 +29,9 @@ export function HomeHeader({ clientName, clientAddress }: HomeHeaderProps) {
         {/* Elementos decorativos */}
         <View style={[styles.decorativeCircle, styles.circle1]} />
         <View style={[styles.decorativeCircle, styles.circle2]} />
+        <View style={[styles.decorativeDot, styles.dot1]} />
+        <View style={[styles.decorativeDot, styles.dot2]} />
+        <View style={[styles.decorativeDot, styles.dot3]} />
         
         <View style={styles.headerContent}>
           <View style={styles.greeting}>
@@ -38,6 +40,7 @@ export function HomeHeader({ clientName, clientAddress }: HomeHeaderProps) {
             
             {clientAddress && (
               <View style={styles.addressWrapper}>
+                <Home size={14} color="rgba(255, 255, 255, 0.9)" style={{ marginRight: 6 }} />
                 <Text style={styles.addressText} numberOfLines={1}>
                   {clientAddress}
                 </Text>
@@ -46,9 +49,12 @@ export function HomeHeader({ clientName, clientAddress }: HomeHeaderProps) {
           </View>
           
           <View style={styles.logoContainer}>
-            <View style={styles.logoBackground}>
-              <Droplet size={28} color={colors.primary} strokeWidth={2.5} />
-            </View>
+            <LinearGradient
+              colors={['#FFFFFF', '#F2F2F2']}
+              style={styles.logoBackground}
+            >
+              <User size={28} color={colors.primary} strokeWidth={2.5} />
+            </LinearGradient>
           </View>
         </View>
       </LinearGradient>
@@ -94,6 +100,29 @@ const styles = StyleSheet.create({
     bottom: -20,
     left: 30,
   },
+  decorativeDot: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 100,
+  },
+  dot1: {
+    width: 14,
+    height: 14,
+    top: 30,
+    left: 110, 
+  },
+  dot2: {
+    width: 10,
+    height: 10,
+    bottom: 40,
+    right: 100,
+  },
+  dot3: {
+    width: 8,
+    height: 8,
+    top: 80,
+    left: 60,
+  },
   greeting: {
     flex: 1,
   },
@@ -111,6 +140,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   addressWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: 12,
     paddingVertical: 6,
@@ -130,7 +161,6 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: 'rgba(0, 0, 0, 0.3)',

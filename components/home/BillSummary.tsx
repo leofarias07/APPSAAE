@@ -8,6 +8,7 @@ import { BillsResponse } from '@/services/api';
 import { Calendar, ArrowRight, AlertTriangle, Clock } from 'lucide-react-native';
 import { format, isAfter, parseISO, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type BillSummaryProps = {
   latestBill: BillsResponse['faturas'][0] | null;
@@ -42,6 +43,12 @@ export function BillSummary({ latestBill }: BillSummaryProps) {
       variant="elevated"
       onPress={latestBill ? navigateToBillDetails : undefined}
     >
+      <LinearGradient
+        colors={billStatus.gradientColors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.statusGradient}
+      />
       <View style={styles.cardHeader}>
         <View style={styles.titleContainer}>
           <Text style={[styles.sectionTitle, isDark && styles.textLight]}>
@@ -200,7 +207,8 @@ function getBillStatus(
     return {
       label: 'NENHUMA FATURA',
       colorStyle: styles.statusNeutral,
-      textStyle: styles.statusTextNeutral
+      textStyle: styles.statusTextNeutral,
+      gradientColors: ['rgba(240, 240, 240, 0.2)', 'rgba(240, 240, 240, 0)'] as [string, string]
     };
   }
   
@@ -208,7 +216,8 @@ function getBillStatus(
     return {
       label: 'VENCIDA',
       colorStyle: styles.statusOverdue,
-      textStyle: styles.statusTextOverdue
+      textStyle: styles.statusTextOverdue,
+      gradientColors: ['rgba(255, 95, 95, 0.15)', 'rgba(255, 95, 95, 0)'] as [string, string]
     };
   }
   
@@ -216,20 +225,25 @@ function getBillStatus(
     return {
       label: 'VENCE EM BREVE',
       colorStyle: styles.statusDueSoon,
-      textStyle: styles.statusTextDueSoon
+      textStyle: styles.statusTextDueSoon,
+      gradientColors: ['rgba(255, 184, 0, 0.15)', 'rgba(255, 184, 0, 0)'] as [string, string]
     };
   }
   
   return {
     label: 'EM ABERTO',
     colorStyle: styles.statusActive,
-    textStyle: styles.statusTextActive
+    textStyle: styles.statusTextActive,
+    gradientColors: ['rgba(0, 119, 217, 0.15)', 'rgba(0, 119, 217, 0)'] as [string, string]
   };
 }
 
 const styles = StyleSheet.create({
   billCard: {
     marginBottom: 16,
+    position: 'relative',
+    overflow: 'hidden',
+    padding: 16,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -400,5 +414,13 @@ const styles = StyleSheet.create({
   },
   textLight: {
     color: colors.textLight,
+  },
+  statusGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    opacity: 0.7,
   },
 }); 
