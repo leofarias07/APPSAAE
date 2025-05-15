@@ -7,9 +7,15 @@
     "icon": "./assets/images/icon.png",
     "scheme": "saae-caxias",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#005D93"
+    },
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.saaecaxias.app"
     },
     "web": {
       "bundler": "metro",
@@ -25,13 +31,19 @@
       "typedRoutes": true
     },
     "android": {
-      "package": "com.anonymous.saaecaxias"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#005D93"
+      },
+      "package": "com.saaecaxias.app"
     },
     "extra": {
       "router": {},
       "eas": {
         "projectId": "4a00c26b-de4e-455e-9458-584f86cba80d"
       }
-    }
+    },
+    "description": "Aplicativo oficial do SAAE Caxias, para gerenciar consumo de água, faturas e muito mais.",
+    "githubUrl": "https://github.com/saaecaxias/app"
   }
 }
