@@ -26,23 +26,51 @@ export const AuthService = {
       // Normaliza a matrícula (remove espaços e caracteres especiais)
       const normalizedMatricula = matricula.trim().replace(/[^0-9]/g, '');
       
-      // Valida a matrícula consultando dados do cliente
-      const response = await ApiService.getClientData(normalizedMatricula);
+      // Tenta múltiplas vezes em caso de erro de conexão
+      let retryCount = 0;
+      const maxRetries = 2;
+      let lastError: any = null;
       
-      if (response && typeof response === 'object' && 'cliente' in response && response.cliente) {
-        console.log('Login bem-sucedido:', response.cliente.nome);
-        
-        // Armazena a matrícula e dados do usuário
-        const userData = response.cliente;
-        await AsyncStorage.setItem(AUTH_MATRICULA_KEY, normalizedMatricula);
-        await AsyncStorage.setItem(AUTH_USER_DATA_KEY, JSON.stringify(userData));
-        await AsyncStorage.setItem(AUTH_LAST_LOGIN_KEY, new Date().toISOString());
-        
-        return userData;
-      } else {
-        console.error('Resposta não contém dados do cliente:', response);
-        throw new Error('Dados do cliente não encontrados');
+      while (retryCount <= maxRetries) {
+        try {
+          // Valida a matrícula consultando dados do cliente
+          const response = await ApiService.getClientData(normalizedMatricula);
+          
+          if (response && typeof response === 'object' && 'cliente' in response && response.cliente) {
+            console.log('Login bem-sucedido:', response.cliente.nome);
+            
+            // Armazena a matrícula e dados do usuário
+            const userData = response.cliente;
+            await AsyncStorage.setItem(AUTH_MATRICULA_KEY, normalizedMatricula);
+            await AsyncStorage.setItem(AUTH_USER_DATA_KEY, JSON.stringify(userData));
+            await AsyncStorage.setItem(AUTH_LAST_LOGIN_KEY, new Date().toISOString());
+            
+            return userData;
+          } else {
+            console.error('Resposta não contém dados do cliente:', response);
+            throw new Error('Dados do cliente não encontrados');
+          }
+        } catch (error) {
+          lastError = error;
+          
+          // Só tenta novamente se for um erro de conexão
+          if (error instanceof ApiError && 
+              (error.status === 503 || error.status === 408 || error.status >= 500)) {
+            retryCount++;
+            if (retryCount <= maxRetries) {
+              console.log(`Tentativa ${retryCount} de ${maxRetries} falhou, tentando novamente...`);
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount)); // Espera 1, 2 segundos entre tentativas
+              continue;
+            }
+          }
+          
+          // Para erros que não são de conexão ou se já esgotamos as tentativas, propaga o erro
+          throw error;
+        }
       }
+      
+      // Não deveria chegar aqui, mas por precaução
+      throw lastError || new Error('Falha na autenticação após múltiplas tentativas');
     } catch (error) {
       console.error('Erro na autenticação:', error);
       
@@ -52,13 +80,15 @@ export const AuthService = {
           throw new Error('Matrícula não encontrada');
         } else if (error.status === 401 || error.status === 403) {
           throw new Error('Acesso não autorizado');
+        } else if (error.status === 503 || error.status === 408) {
+          throw new Error('Erro de conexão. Verifique sua internet ou tente novamente mais tarde.');
         } else if (error.status >= 500) {
           throw new Error('Erro no servidor. Tente novamente mais tarde.');
         }
       }
       
       // Erro genérico
-      throw new Error('Matrícula inválida ou erro na autenticação');
+      throw new Error('Matrícula inválida ou erro na conexão. Por favor, tente novamente.');
     }
   },
   

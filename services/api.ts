@@ -49,13 +49,20 @@ async function fetchFromAPI<T>(endpoint: string): Promise<T> {
   try {
     console.log(`Fazendo requisição real para: ${API.BASE_URL}${endpoint}`);
     
+    // Adicionar timeout para evitar requisições pendentes por muito tempo
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout
+    
     const response = await fetch(`${API.BASE_URL}${endpoint}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       const errorText = await response.text();
@@ -67,17 +74,26 @@ async function fetchFromAPI<T>(endpoint: string): Promise<T> {
     console.log(`Resposta da API para ${endpoint}:`, data);
     
     // Verificar se a resposta tem o formato esperado
-    if (!data.success) {
-      throw new ApiError('Resposta inválida da API', 500);
+    if (data && typeof data === 'object' && 'success' in data && !data.success) {
+      throw new ApiError('Resposta indica falha na API', 500);
     }
     
     return data as T;
-  } catch (error) {
+  } catch (error: any) {
+    console.error('API request failed:', error);
+    
     if (error instanceof ApiError) {
       throw error;
     }
     
-    console.error('API request failed:', error);
+    if (error.name === 'AbortError') {
+      throw new ApiError('Tempo de conexão esgotado. Verifique sua internet.', 408);
+    }
+    
+    if (error.message && error.message.includes('Network request failed')) {
+      throw new ApiError('Erro de conexão. Verifique sua internet ou o endereço do servidor.', 503);
+    }
+    
     throw new ApiError('Falha na comunicação com o servidor', 500);
   }
 }

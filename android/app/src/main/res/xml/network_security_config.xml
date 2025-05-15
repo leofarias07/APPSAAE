@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Permitir conexões HTTP para o servidor API -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">45.162.56.223</domain>
+    </domain-config>
+    
+    <!-- Configuração padrão -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config> 
